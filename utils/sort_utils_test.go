@@ -94,6 +94,6 @@ func BenchmarkBubbleSort100000(b *testing.B) {
 func BenchmarkSort100000(b *testing.B) {
 	els := getElements(100000)
 	for i := 0; i < b.N; i++ {
-		sort.Ints(els)
+		Sort(els)
 	}
 }
