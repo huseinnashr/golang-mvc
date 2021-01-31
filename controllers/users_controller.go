@@ -1,17 +1,17 @@
 package controllers
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/nvdhunter/golang-mvc/services"
 	"github.com/nvdhunter/golang-mvc/utils"
 )
 
-func GetUser(resp http.ResponseWriter, req *http.Request) {
-	userId, err := strconv.ParseInt(req.URL.Query().Get("user_id"), 10, 64)
+func GetUser(c *gin.Context) {
+	userId, err := strconv.ParseInt(c.Param("user_id"), 10, 64)
 	if err != nil {
 		apiErr := &utils.ApplicationError{
 			Message:    "user_id must be a number",
@@ -19,21 +19,16 @@ func GetUser(resp http.ResponseWriter, req *http.Request) {
 			Code:       "bad_request",
 		}
 
-		jsonValue, _ := json.Marshal(apiErr)
-		resp.WriteHeader(http.StatusBadRequest)
-		resp.Write(jsonValue)
+		utils.RespondError(c, apiErr)
 		return
 	}
 	log.Printf("About to process user_id %v", userId)
 
 	user, apiErr := services.UserService.GetUser(userId)
 	if apiErr != nil {
-		jsonValue, _ := json.Marshal(apiErr)
-		resp.WriteHeader(apiErr.StatusCode)
-		resp.Write(jsonValue)
+		utils.RespondError(c, apiErr)
 		return
 	}
 
-	jsonValue, _ := json.Marshal(user)
-	resp.Write(jsonValue)
+	utils.Respond(c, http.StatusOK, user)
 }
