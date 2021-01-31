@@ -26,7 +26,7 @@ func GetUser(resp http.ResponseWriter, req *http.Request) {
 	}
 	log.Printf("About to process user_id %v", userId)
 
-	user, apiErr := services.GetUser(userId)
+	user, apiErr := services.UserService.GetUser(userId)
 	if apiErr != nil {
 		jsonValue, _ := json.Marshal(apiErr)
 		resp.WriteHeader(apiErr.StatusCode)
